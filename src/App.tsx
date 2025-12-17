@@ -4,6 +4,7 @@ import { Cart } from './components/Cart'
 import { ProductCard } from './components/ProductCard'
 import { ProductDetail } from './components/ProductDetail'
 import Contact from './components/Contact'
+import Footer from './components/Footer'
 import { AdminDashboard } from './components/AdminDashboard'
 import { Header } from './components/Header'
 import { About } from './components/About'
@@ -178,7 +179,7 @@ function App() {
                     
                     {!loading && filteredProducts.length === 0 && (
                       <div className="text-center py-20">
-                        <div className="text-6xl mb-4">🛍️</div>
+                        <div className="text-6xl mb-4">Ã°</div>
                         <h3 className="text-2xl font-semibold text-gray-900 mb-2">No products found</h3>
                         <p className="text-gray-600">Try adjusting your search or filter criteria</p>
                       </div>
@@ -187,6 +188,7 @@ function App() {
                 </section>
 
                 <Contact />
+                <Footer />
               </>
             } />
             
