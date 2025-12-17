@@ -13,7 +13,7 @@ export const PrivacyPolicy: React.FC = () => {
             onClick={() => navigate('/')}
             className="inline-flex items-center gap-2 text-purple-200 hover:text-white font-medium mb-8 transition-colors"
           >
-            ← Back to Home
+            Ã¢ÂÂ Back to Home
           </button>
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-400 to-yellow-400 bg-clip-text text-transparent">
