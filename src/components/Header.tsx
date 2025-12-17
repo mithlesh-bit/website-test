@@ -25,7 +25,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, searchQuery, onSearc
           {/* Logo */}
           <div className="flex items-center cursor-pointer" onClick={() => navigate('/')}>
             <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center mr-3">
-              <span className="text-white font-bold text-lg">👗</span>
+              <span className="text-white font-bold text-lg">ð</span>
             </div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               FashionHub
@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, searchQuery, onSearc
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 focus:bg-white transition-all duration-300"
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-400">🔍</span>
+                  <span className="text-gray-400">ð</span>
                 </div>
               </div>
             </div>
@@ -83,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, searchQuery, onSearc
               onClick={onOpenCart}
               className="relative bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 rounded-full hover:from-purple-700 hover:to-pink-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
-              <span className="text-lg">🛒</span>
+              <span className="text-lg">ð</span>
               <span className="hidden sm:inline font-medium">Cart</span>
               {cartItemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, searchQuery, onSearc
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50 focus:bg-white transition-all duration-300"
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-400">🔍</span>
+                    <span className="text-gray-400">ð</span>
                   </div>
                 </div>
               </div>

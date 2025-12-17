@@ -26,7 +26,7 @@ export const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <span className="text-2xl text-gray-500">×</span>
+              <span className="text-2xl text-gray-500">Ã</span>
             </button>
           </div>
         </div>
@@ -34,7 +34,7 @@ export const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
         <div className="flex-1 overflow-y-auto max-h-96 p-6">
           {cart.length === 0 ? (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4">🛒</div>
+              <div className="text-6xl mb-4">ð</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
               <p className="text-gray-600">Add some products to get started!</p>
             </div>
@@ -49,7 +49,7 @@ export const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                   />
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-900">{item.name}</h4>
-                    <p className="text-sm text-gray-600">{item.color} • Size {item.size}</p>
+                    <p className="text-sm text-gray-600">{item.color} â¢ Size {item.size}</p>
                     <p className="font-bold text-purple-600">${item.price.toFixed(2)}</p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -57,7 +57,7 @@ export const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
                       className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
                     >
-                      −
+                      â
                     </button>
                     <span className="w-8 text-center font-semibold">{item.quantity}</span>
                     <button
@@ -71,7 +71,7 @@ export const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                     onClick={() => removeFromCart(item.id)}
                     className="text-red-500 hover:text-red-700 p-2"
                   >
-                    🗑️
+                    ðï¸
                   </button>
                 </div>
               ))}

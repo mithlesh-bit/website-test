@@ -1,10 +1,2 @@
-import { useContext } from 'react'
-import { CartContext } from '../contexts/CartContext'
-
-export const useCart = () => {
-  const context = useContext(CartContext)
-  if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider')
-  }
-  return context
-}
+// Re-export the useCart hook from CartContext for convenience
+export { useCart } from '../contexts/CartContext'

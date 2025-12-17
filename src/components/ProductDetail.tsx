@@ -41,14 +41,14 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }
                 onClick={onClose}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
-                <span className="text-2xl text-gray-500">×</span>
+                <span className="text-2xl text-gray-500">Ã</span>
               </button>
             </div>
 
             <div className="mb-6">
               <div className="flex items-center gap-1 text-yellow-400 mb-2">
-                {'★'.repeat(5)}
-                <span className="text-sm text-gray-600 ml-2">(4.8 • 124 reviews)</span>
+                {'â'.repeat(5)}
+                <span className="text-sm text-gray-600 ml-2">(4.8 â¢ 124 reviews)</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-3xl font-bold text-gray-900">${product.price.toFixed(2)}</span>
@@ -101,19 +101,19 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }
               <h3 className="font-semibold text-gray-900 mb-3">Features</h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-500">â</span>
                   Premium quality materials
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-500">â</span>
                   Comfortable fit
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-500">â</span>
                   Easy care instructions
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-500">â</span>
                   30-day return policy
                 </li>
               </ul>
