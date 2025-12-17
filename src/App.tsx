@@ -8,6 +8,7 @@ import { AdminDashboard } from './components/AdminDashboard'
 import { Header } from './components/Header'
 import { About } from './components/About'
 import { PrivacyPolicy } from './components/PrivacyPolicy'
+import { Footer } from './components/Footer'
 import { CartProvider } from './contexts/CartContext'
 import { Product, supabase } from './lib/supabase'
 
@@ -187,12 +188,13 @@ function App() {
                 </section>
 
                 <Contact />
+                <Footer />
               </>
             } />
             
             <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/about" element={<><About /><Footer /></>} />
+            <Route path="/privacy" element={<><PrivacyPolicy /><Footer /></>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
 
