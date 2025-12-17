@@ -1,86 +1,87 @@
-import React, { createContext, useState, ReactNode } from 'react'
-import { Product, CartItem } from '../lib/supabase'
+import React, { createContext, useContext, useState, useEffect } from 'react'
+import { Product } from '../lib/supabase'
 
-// Simple UUID v4 generator function to replace external dependency
-const generateUUID = (): string => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0
-    const v = c === 'x' ? r : (r & 0x3 | 0x8)
-    return v.toString(16)
-  })
+interface CartItem extends Product {
+  quantity: number
 }
 
 interface CartContextType {
   cart: CartItem[]
-  addToCart: (product: Product, size: string, quantity: number) => void
-  removeFromCart: (itemId: string) => void
-  updateQuantity: (itemId: string, quantity: number) => void
+  addToCart: (product: Product) => void
+  updateQuantity: (id: string, quantity: number) => void
+  removeFromCart: (id: string) => void
   clearCart: () => void
-  getTotal: () => number
+  getCartTotal: () => number
 }
 
-export const CartContext = createContext<CartContextType | undefined>(undefined)
+const CartContext = createContext<CartContextType | undefined>(undefined)
 
-interface CartProviderProps {
-  children: ReactNode
-}
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    const savedCart = localStorage.getItem('fashionhub-cart')
+    return savedCart ? JSON.parse(savedCart) : []
+  })
 
-export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [cart, setCart] = useState<CartItem[]>([])
+  useEffect(() => {
+    localStorage.setItem('fashionhub-cart', JSON.stringify(cart))
+  }, [cart])
 
-  const addToCart = (product: Product, size: string, quantity: number) => {
-    const existingItem = cart.find(
-      item => item.product.id === product.id && item.size === size
-    )
-
-    if (existingItem) {
-      updateQuantity(existingItem.id, existingItem.quantity + quantity)
-    } else {
-      const newItem: CartItem = {
-        id: generateUUID(),
-        product,
-        size,
-        quantity
+  const addToCart = (product: Product) => {
+    setCart(prev => {
+      const existingItem = prev.find(item => item.id === product.id)
+      if (existingItem) {
+        return prev.map(item =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
       }
-      setCart(prev => [...prev, newItem])
-    }
+      return [...prev, { ...product, quantity: 1 }]
+    })
   }
 
-  const removeFromCart = (itemId: string) => {
-    setCart(prev => prev.filter(item => item.id !== itemId))
-  }
-
-  const updateQuantity = (itemId: string, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(itemId)
+      removeFromCart(id)
       return
     }
-    
     setCart(prev =>
       prev.map(item =>
-        item.id === itemId ? { ...item, quantity } : item
+        item.id === id ? { ...item, quantity } : item
       )
     )
+  }
+
+  const removeFromCart = (id: string) => {
+    setCart(prev => prev.filter(item => item.id !== id))
   }
 
   const clearCart = () => {
     setCart([])
   }
 
-  const getTotal = () => {
-    return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0)
+  const getCartTotal = () => {
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0)
   }
 
   return (
     <CartContext.Provider value={{
       cart,
       addToCart,
-      removeFromCart,
       updateQuantity,
+      removeFromCart,
       clearCart,
-      getTotal
+      getCartTotal
     }}>
       {children}
     </CartContext.Provider>
   )
+}
+
+export const useCart = () => {
+  const context = useContext(CartContext)
+  if (context === undefined) {
+    throw new Error('useCart must be used within a CartProvider')
+  }
+  return context
 }

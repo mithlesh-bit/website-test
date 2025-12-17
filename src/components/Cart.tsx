@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useCart } from '../hooks/useCart'
-import { supabase } from '../lib/supabase'
 
 interface CartProps {
   isOpen: boolean
@@ -8,198 +7,100 @@ interface CartProps {
 }
 
 export const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
-  const { cart, removeFromCart, updateQuantity, clearCart, getTotal } = useCart()
-  const [isCheckingOut, setIsCheckingOut] = useState(false)
-  const [showCheckout, setShowCheckout] = useState(false)
-  const [customerInfo, setCustomerInfo] = useState({
-    name: '',
-    email: '',
-    address: ''
-  })
-  const [orderSuccess, setOrderSuccess] = useState(false)
-
-  const handleCheckout = async () => {
-    if (!customerInfo.name || !customerInfo.email || !customerInfo.address) {
-      alert('Please fill in all customer information')
-      return
-    }
-
-    setIsCheckingOut(true)
-    try {
-      // Create order
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          total: getTotal(),
-          status: 'pending',
-          customer_name: customerInfo.name,
-          customer_email: customerInfo.email,
-          customer_address: customerInfo.address
-        })
-        .select()
-        .single()
-
-      if (orderError) throw orderError
-
-      // Create order items
-      const orderItems = cart.map(item => ({
-        order_id: order.id,
-        product_id: item.product.id,
-        quantity: item.quantity,
-        price: item.product.price,
-        size: item.size
-      }))
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems)
-
-      if (itemsError) throw itemsError
-
-      // Update product stock
-      for (const item of cart) {
-        const { error: stockError } = await supabase
-          .from('products')
-          .update({ stock: item.product.stock - item.quantity })
-          .eq('id', item.product.id)
-
-        if (stockError) throw stockError
-      }
-
-      clearCart()
-      setOrderSuccess(true)
-      setShowCheckout(false)
-      setTimeout(() => {
-        setOrderSuccess(false)
-        onClose()
-      }, 3000)
-    } catch (error) {
-      console.error('Checkout error:', error)
-      alert('Error processing order. Please try again.')
-    } finally {
-      setIsCheckingOut(false)
-    }
-  }
+  const { cart, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart()
 
   if (!isOpen) return null
 
+  const handleCheckout = () => {
+    // Implement checkout logic here
+    alert('Checkout functionality would be implemented here')
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-2xl font-bold">Shopping Cart</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
-          >
-            ×
-          </button>
+      <div className="bg-white rounded-2xl max-w-md w-full max-h-[80vh] overflow-hidden shadow-2xl">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-gray-900">Shopping Cart</h2>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <span className="text-2xl text-gray-500">×</span>
+            </button>
+          </div>
         </div>
 
-        {orderSuccess && (
-          <div className="p-6 bg-green-100 border border-green-400 text-green-700">
-            <h3 className="font-bold mb-2">Order Placed Successfully!</h3>
-            <p>Thank you for your purchase. You will receive a confirmation email shortly.</p>
-          </div>
-        )}
-
-        <div className="p-6">
+        <div className="flex-1 overflow-y-auto max-h-96 p-6">
           {cart.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">Your cart is empty</p>
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🛒</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
+              <p className="text-gray-600">Add some products to get started!</p>
+            </div>
           ) : (
-            <>
+            <div className="space-y-4">
               {cart.map((item) => (
-                <div key={item.id} className="flex items-center gap-4 py-4 border-b">
+                <div key={item.id} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
                   <img
-                    src={item.product.image_url}
-                    alt={item.product.name}
-                    className="w-16 h-16 object-cover rounded"
+                    src={item.image_url}
+                    alt={item.name}
+                    className="w-16 h-16 object-cover rounded-lg"
                   />
                   <div className="flex-1">
-                    <h3 className="font-semibold">{item.product.name}</h3>
-                    <p className="text-gray-600 text-sm">Size: {item.size}</p>
-                    <p className="text-blue-600 font-bold">${item.product.price}</p>
+                    <h4 className="font-semibold text-gray-900">{item.name}</h4>
+                    <p className="text-sm text-gray-600">{item.color} • Size {item.size}</p>
+                    <p className="font-bold text-purple-600">${item.price.toFixed(2)}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"
+                      className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
                     >
-                      -
+                      −
                     </button>
-                    <span className="mx-2">{item.quantity}</span>
+                    <span className="w-8 text-center font-semibold">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300"
+                      className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
                     >
                       +
                     </button>
                   </div>
                   <button
                     onClick={() => removeFromCart(item.id)}
-                    className="text-red-600 hover:text-red-800 ml-4"
+                    className="text-red-500 hover:text-red-700 p-2"
                   >
-                    Remove
+                    🗑️
                   </button>
                 </div>
               ))}
-
-              <div className="mt-6 pt-6 border-t">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xl font-bold">Total: ${getTotal().toFixed(2)}</span>
-                </div>
-
-                {!showCheckout ? (
-                  <button
-                    onClick={() => setShowCheckout(true)}
-                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
-                  >
-                    Proceed to Checkout
-                  </button>
-                ) : (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Customer Information</h3>
-                    <input
-                      type="text"
-                      placeholder="Full Name"
-                      value={customerInfo.name}
-                      onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                      className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={customerInfo.email}
-                      onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
-                      className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                    />
-                    <textarea
-                      placeholder="Delivery Address"
-                      value={customerInfo.address}
-                      onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
-                      className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 h-24"
-                    />
-                    <div className="flex gap-4">
-                      <button
-                        onClick={() => setShowCheckout(false)}
-                        className="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors duration-200"
-                      >
-                        Back
-                      </button>
-                      <button
-                        onClick={handleCheckout}
-                        disabled={isCheckingOut}
-                        className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 disabled:bg-gray-400"
-                      >
-                        {isCheckingOut ? 'Processing...' : 'Place Order'}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
+            </div>
           )}
         </div>
+
+        {cart.length > 0 && (
+          <div className="p-6 border-t border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-lg font-semibold">Total:</span>
+              <span className="text-2xl font-bold text-purple-600">${getCartTotal().toFixed(2)}</span>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={clearCart}
+                className="flex-1 bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                Clear Cart
+              </button>
+              <button
+                onClick={handleCheckout}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
