@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Product } from '../lib/supabase'
 
 interface ProductCardProps {
@@ -7,127 +7,100 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onViewProduct }) => {
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const [imageError, setImageError] = useState(false)
-
-  const handleImageLoad = () => {
-    setImageLoaded(true)
-  }
-
-  const handleImageError = () => {
-    setImageError(true)
-    setImageLoaded(true)
-  }
+  const discountPercentage = Math.floor(Math.random() * 30) + 10 // Random discount for demo
+  const originalPrice = product.price * 1.2
 
   return (
-    <div className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+    <div className="group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
+      {/* Image Container */}
       <div className="relative overflow-hidden">
-        {!imageLoaded && (
-          <div className="w-full h-72 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center">
-            <div className="text-gray-400 text-4xl">👕</div>
-          </div>
-        )}
-        {imageError ? (
-          <div className="w-full h-72 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-            <div className="text-gray-400 text-6xl">📷</div>
-          </div>
-        ) : (
-          <img
-            src={product.image_url}
-            alt={product.name}
-            className={`w-full h-72 object-cover cursor-pointer transition-all duration-500 group-hover:scale-110 ${
-              imageLoaded ? 'opacity-100' : 'opacity-0 absolute'
-            }`}
-            onClick={() => onViewProduct(product)}
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-          />
-        )}
+        <img
+          src={product.image_url}
+          alt={product.name}
+          className="w-full h-72 object-cover cursor-pointer group-hover:scale-110 transition-transform duration-700"
+          onClick={() => onViewProduct(product)}
+        />
         
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
         
-        {/* Quick view button */}
+        {/* Quick View Button */}
         <button
           onClick={() => onViewProduct(product)}
-          className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-800 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-lg"
+          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         >
-          👁️
+          <span className="bg-white text-gray-900 px-6 py-2 rounded-full font-semibold shadow-lg transform scale-95 group-hover:scale-100 transition-transform duration-300">
+            Quick View
+          </span>
         </button>
         
-        {/* Stock badge */}
-        {product.stock <= 5 && product.stock > 0 && (
-          <div className="absolute top-4 left-4 bg-gradient-to-r from-orange-400 to-red-400 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-            Only {product.stock} left!
-          </div>
-        )}
-        
-        {product.stock === 0 && (
-          <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-            Out of Stock
-          </div>
-        )}
-        
-        {/* New badge for recent products */}
-        {new Date(product.created_at).getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000 && (
-          <div className="absolute top-4 left-4 bg-gradient-to-r from-green-400 to-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-            New
-          </div>
-        )}
-      </div>
-      
-      <div className="p-6">
-        <div className="mb-3">
-          <span className="inline-block bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
-            {product.category}
-          </span>
+        {/* Discount Badge */}
+        <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+          -{discountPercentage}%
         </div>
         
-        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-200 line-clamp-1">
+        {/* Stock Badge */}
+        <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold ${
+          product.stock > 10 
+            ? 'bg-green-100 text-green-800' 
+            : product.stock > 0 
+            ? 'bg-yellow-100 text-yellow-800' 
+            : 'bg-red-100 text-red-800'
+        }`}>
+          {product.stock > 0 ? `${product.stock} left` : 'Out of Stock'}
+        </div>
+      </div>
+      
+      {/* Content */}
+      <div className="p-6">
+        {/* Category */}
+        <div className="text-xs font-medium text-purple-600 uppercase tracking-wide mb-2">
+          {product.category}
+        </div>
+        
+        {/* Name */}
+        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors duration-300">
           {product.name}
         </h3>
         
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+        {/* Description */}
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
           {product.description}
         </p>
         
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex flex-col">
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              ${product.price}
-            </span>
-            <span className="text-xs text-gray-500">
-              {product.color} • {product.size}
-            </span>
+        {/* Product Details */}
+        <div className="flex items-center gap-3 mb-4 text-sm text-gray-500">
+          <span className="flex items-center gap-1">
+            <div className={`w-3 h-3 rounded-full`} style={{ backgroundColor: product.color.toLowerCase() }}></div>
+            {product.color}
+          </span>
+          <span>•</span>
+          <span>Size {product.size}</span>
+        </div>
+        
+        {/* Price */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold text-gray-900">${product.price.toFixed(2)}</span>
+            <span className="text-sm text-gray-500 line-through">${originalPrice.toFixed(2)}</span>
           </div>
-          <div className="text-right">
-            <div className={`text-sm font-medium ${
-              product.stock > 10 ? 'text-green-600' : 
-              product.stock > 0 ? 'text-orange-600' : 'text-red-600'
-            }`}>
-              {product.stock > 0 ? (
-                <div className="flex items-center gap-1">
-                  <div className={`w-2 h-2 rounded-full ${
-                    product.stock > 10 ? 'bg-green-500' : 'bg-orange-500'
-                  }`} />
-                  <span>{product.stock} in stock</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full bg-red-500" />
-                  <span>Out of stock</span>
-                </div>
-              )}
-            </div>
+          <div className="flex items-center gap-1 text-yellow-400">
+            {'★'.repeat(5)}
+            <span className="text-sm text-gray-600 ml-1">(4.8)</span>
           </div>
         </div>
         
+        {/* Action Button */}
         <button
           onClick={() => onViewProduct(product)}
-          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+          disabled={product.stock === 0}
+          className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform ${
+            product.stock === 0
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 hover:shadow-lg hover:scale-105 active:scale-95'
+          }`}
         >
-          <span>View Details</span>
-          <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
+          {product.stock === 0 ? 'Out of Stock' : 'View Details'}
         </button>
       </div>
     </div>
