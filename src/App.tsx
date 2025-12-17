@@ -6,6 +6,7 @@ import { ProductDetail } from './components/ProductDetail'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import { AdminDashboard } from './components/AdminDashboard'
+import AboutUs from './components/AboutUs'
 import { Header } from './components/Header'
 import { CartProvider } from './contexts/CartContext'
 import { Product, supabase } from './lib/supabase'
@@ -190,6 +191,7 @@ function App() {
               </>
             } />
             
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
